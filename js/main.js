@@ -91,6 +91,31 @@ game.States.menu = function () {
 
 game.States.play = function () {
 
+    this.create = function () {
+
+        this.bg = game.add.tileSprite(0, 0, game.width, game.height, 'background'); // 背景图，这里先不用移动，等游戏开始后再移动。
+        this.pipeGroup = game.add.group(); // 用于存放管道的组
+        this.pipeGroup.enableBody = true;
+        this.ground = game.add.tileSprite(0, game.height - 112, game.width, 112, 'ground'); // 地板，这里先不用移动，游戏开始再动
+        this.bird = game.add.sprite(50, 150, 'bird'); // 鸟
+        this.bird.animations.add('fly'); // 添加动画
+        this.bird.animations.play('fly', 12, true); // 播放动画
+        this.bird.anchor.setTo(0.5, 0.5); // 设置中心点
+        game.physics.enable(this.bird, Phaser.Physics.ARCADE); // 开启鸟的物理系统
+        this.bird.body.gravity.y = 0; // 鸟的重力，未开始游戏，先让重力为0，不然鸟会掉下来
+        game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
+        this.ground.body.immovable = true; // 让地面在物理环境中固定不动
+        this.readyText = game.add.image(game.width/2, 40, 'ready_text'); // get ready文字
+        this.playTip = game.add.image(game.width/2, 300, 'play_tip'); // 提示点击屏幕的图片
+        this.readyText.anchor.setTo(0.5, 0);
+        this.playTip.anchor.setTo(0.5, 0);
+
+        this.hasStarted = false; // 游戏是否开始
+        game.time.events.loop(900, this.generatePipes, this); // 利用时钟事件来循环产生管道
+        game.time.events.stop(false); // 先不要启动时钟 ##########即使没调用start方法，它也会自动启用，去看一看这是不是一个bug##########
+        game.input.onDown.addOnce(this.startGame, this); // 点击屏幕后正式开始游戏
+
+    };
 
 
 };

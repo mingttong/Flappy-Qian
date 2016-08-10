@@ -193,6 +193,25 @@ game.States.play = function () {
 
     }
 
+    this.update = function () { // 每一帧中都要执行的代码可以写在update方法中
+
+        if (!this.hasStarted) return; // 游戏未开始，先不执行任何东西
+
+        game.physics.arcade.collide( this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
+        game.physics.arcade.collide(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
+        if (this.bird.angle < 90) this.bird.angle += 2.5; // 下降时鸟的头朝下
+        this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新
+
+    }
+
+    // 分数管理
+
+    this.checkScore = function (pipe) { // 负责分数的检测和更新，pipe表示待检测的管道
+        // pipe.hasScored 属性用来标识该管道是否已经得过分
+        // pipe.y<0 是指一组管道中的上面那个管道，
+
+    }
+
 };
 
 // 把定义好的场景添加到游戏中

@@ -1,7 +1,7 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
-var game = new Phaser.Game(288, 505, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
+var game = new Phaser.Game(320, 505, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 
 game.States = {}; // 创建一个对象来存放要用到的state
 
@@ -11,7 +11,7 @@ game.States.boot = function () {
 
     this.preload = function () {
 
-        game.load.image('loading', '../assets/preloader.gif'); // 加载进度条图片资源
+        game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
 
     };
 
@@ -64,10 +64,8 @@ game.States.menu = function () {
 
     this.create = function () {
 
-        var bg = game.add.tileSprite( 0, 0, game.width, game.height, 'background'); // 当作背景的tileSprite
-        var ground = game.add.tileSprite( 0, game.height, 122, game.width, 122, 'ground').autoScroll(-100, 0); // 当作地面的tileSprite
-        bg.autoScroll(-10, 0); // 让背景动起来
-        ground.autoScroll(-100, 0); // 让地面动起来
+        game.add.tileSprite( 0, 0, game.width, game.height, 'background').autoScroll(-10, 0); // 背景图
+        game.add.tileSprite(0, game.height - 112, game.width, 112, 'ground').autoScroll(-100, 0); // 地板
 
         var titleGroup = game.add.group(); // 创建存放标题的组
         titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
@@ -78,13 +76,23 @@ game.States.menu = function () {
         titleGroup.y = 100; // 调整组的垂直位置
         game.add.tween(titleGroup).to({ y: 120}, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
 
-    }
+        // 添加一个按钮
 
+        var btn = game.add.button(game.width/2, game.height/2, 'btn', function(){
+            game.state.start('play'); // 点击按钮时跳转到play场景
+        });
+
+        btn.anchor.setTo(0.5, 0.5); // 设置按钮的中心点
+
+    }
 };
 
 // play场景，正式的游戏部分
 
 game.States.play = function () {
+
+
+
 };
 
 // 把定义好的场景添加到游戏中
@@ -92,3 +100,6 @@ game.state.add('boot', game.States.boot);
 game.state.add('preload', game.States.preload);
 game.state.add('menu', game.States.menu);
 game.state.add('play', game.States.play);
+
+// 调用boot场景来启动游戏
+game.state.start('boot');

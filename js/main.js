@@ -32,7 +32,7 @@ game.States.preload = function () {
 
     this.preload = function () {
 
-        var preloadSprite = game.add.sprite( 50, game.height/2, 'loading'); // 创建显示loading进度的sprite
+        var preloadSprite = game.add.sprite(50, game.height / 2, 'loading'); // 创建显示loading进度的sprite
         game.load.setPreloadSprite(preloadSprite); // 用setpreloadSprite方法来实现动态进度条的效果
 
         //以下为要加载的资源
@@ -67,21 +67,21 @@ game.States.menu = function () {
 
     this.create = function () {
 
-        game.add.tileSprite( 0, 0, game.width, game.height, 'background').autoScroll(-10, 0); // 背景图
+        game.add.tileSprite(0, 0, game.width, game.height, 'background').autoScroll(-10, 0); // 背景图
         game.add.tileSprite(0, game.height - 112, game.width, 112, 'ground').autoScroll(-100, 0); // 地板
 
         var titleGroup = game.add.group(); // 创建存放标题的组
         titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
-        var bird = titleGroup.create( 190, 10, 'bird'); // 创建bird对象并添加到组里
+        var bird = titleGroup.create(190, 10, 'bird'); // 创建bird对象并添加到组里
         bird.animations.add('fly'); // 给鸟添加动画
         bird.animations.play('fly', 12, true); // 播放动画
         titleGroup.x = 35; // 调整组的水平位置
         titleGroup.y = 100; // 调整组的垂直位置
-        game.add.tween(titleGroup).to({ y: 120}, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
+        game.add.tween(titleGroup).to({y: 120}, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
 
         // 添加一个按钮
 
-        var btn = game.add.button(game.width/2, game.height/2, 'btn', function(){
+        var btn = game.add.button(game.width / 2, game.height / 2, 'btn', function () {
             game.state.start('play'); // 点击按钮时跳转到play场景
         });
 
@@ -108,8 +108,14 @@ game.States.play = function () {
         this.bird.body.gravity.y = 0; // 鸟的重力，未开始游戏，先让重力为0，不然鸟会掉下来
         game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
         this.ground.body.immovable = true; // 让地面在物理环境中固定不动
-        this.readyText = game.add.image(game.width/2, 40, 'ready_text'); // get ready文字
-        this.playTip = game.add.image(game.width/2, 300, 'play_tip'); // 提示点击屏幕的图片
+
+        this.soundFly = game.add.sound('fly_sound');
+        this.soundScore = game.add.sound('score_sound');
+        this.soundHitPipe = game.add.sound('hit_pipe_sound');
+        this.soundHitGround = game.add.sound('hit_ground_sound');
+
+        this.readyText = game.add.image(game.width / 2, 40, 'ready_text'); // get ready文字
+        this.playTip = game.add.image(game.width / 2, 300, 'play_tip'); // 提示点击屏幕的图片
         this.readyText.anchor.setTo(0.5, 0);
         this.playTip.anchor.setTo(0.5, 0);
 
@@ -122,7 +128,7 @@ game.States.play = function () {
 
     // 正式开始游戏
 
-    this.startGame = function() {
+    this.startGame = function () {
 
         this.gameSpeed = 200; // 游戏速度
         this.gameIsOver = false; // 游戏是否已结束的标志
@@ -136,6 +142,19 @@ game.States.play = function () {
         this.playTip.destroy(); // 去除'玩法提示' 图片
         game.input.onDown.add(this.fly, this); // 给鼠标按下事件绑定鸟的飞翔动作
         game.time.events.start(); // 启动时钟事件，开始制造管道
+    };
+
+    this.stopGame = function () {
+
+        this.bg.stopScroll();
+        this.ground.stopScroll();
+        this.pipeGroup.forEachExists(function(pipe) {
+            pipe.body.velocity.x = 0;
+        }, this);
+        this.bird.animations.stop('fly', 0);
+        game.input.onDown.remove(this.fly, this);
+        game.time.events.stop(true);
+
     };
 
     // 鸟的飞翔动作
@@ -152,14 +171,14 @@ game.States.play = function () {
     this.generatePipes = function (gap) {
 
         gap = gap || 100; // 上下管道之间的间隙宽度
-        var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor( (WINDOW_HEIGHT - 112 - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
+        var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor((WINDOW_HEIGHT - 112 - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
         var topPipeY = position - 360; // 上方管道的位置
         var bottomPipeY = position + gap; // 下方管道的位置
 
-        if ( this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
+        if (this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
 
-        var topPipe = game.add.sprite( game.width, topPipeY, 'pipe', 0, this.pipeGroup); // 上方的管道
-        var bottomPipe = game.add.sprite( game.width, bottomPipeY, 'pipe', 1, this.pipeGroup); // 下方的管道
+        var topPipe = game.add.sprite(game.width, topPipeY, 'pipe', 0, this.pipeGroup); // 上方的管道
+        var bottomPipe = game.add.sprite(game.width, bottomPipeY, 'pipe', 1, this.pipeGroup); // 下方的管道
         this.pipeGroup.setAll('checkWorldBounds', true); // 边界检测
         this.pipeGroup.setAll('outOfBoundsKill', true); // 出边界后自动kill
         this.pipeGroup.setAll('body.velocity.x', -this.gameSpeed); // 设置管道运动的速度
@@ -171,7 +190,7 @@ game.States.play = function () {
     this.resetPipe = function (topPipeY, bottomPipeY) {
 
         var i = 0;
-        this.pipeGroup.forEachDead( function (pipe) { // 对组调用forEachDead方法来获取那些已经出了边界，就是“死亡”了的对象
+        this.pipeGroup.forEachDead(function (pipe) { // 对组调用forEachDead方法来获取那些已经出了边界，就是“死亡”了的对象
 
             if (pipe.y <= 0) { // 是上方的管道
 
@@ -180,7 +199,7 @@ game.States.play = function () {
 
             } else {
 
-                pipe.reset( game.width, bottomPipeY ); // 重置到初始位置
+                pipe.reset(game.width, bottomPipeY); // 重置到初始位置
 
             }
 
@@ -197,7 +216,7 @@ game.States.play = function () {
 
         if (!this.hasStarted) return; // 游戏未开始，先不执行任何东西
 
-        game.physics.arcade.collide( this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
+        game.physics.arcade.collide(this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
         game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
         if (this.bird.angle < 90) this.bird.angle += 2.5; // 下降时鸟的头朝下
         this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新

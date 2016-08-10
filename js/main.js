@@ -1,7 +1,10 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
-var game = new Phaser.Game(320, 505, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
+var WINDOW_WIDTH = 320;
+var WINDOW_HEIGHT = 505;
+
+var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 
 game.States = {}; // 创建一个对象来存放要用到的state
 
@@ -50,9 +53,9 @@ game.States.preload = function () {
         game.load.image('play_tip', 'assets/instructions.png'); // 玩法提示图片
         game.load.image('game_over', 'assets/gameover.png'); // gameover图片
         game.load.image('score_board', 'assets/scoreboard.png'); // 得分板
-    }
+    };
 
-    this.create = function() {
+    this.create = function () {
         game.state.start('menu'); // 当以上所有资源都加载完成后就可以进入menu游戏菜单场景了
     }
 
@@ -117,6 +120,78 @@ game.States.play = function () {
 
     };
 
+    // 正式开始游戏
+
+    this.startGame = function() {
+
+        this.gameSpeed = 200; // 游戏速度
+        this.gameIsOver = false; // 游戏是否已结束的标志
+        this.hasHitGround = false; // 是否撞到地面的标志
+        this.hasStarted = true; // 游戏是否已经开始的标志
+        this.score = 0; // 初始得分
+        this.bg.autoScroll(-(this.gameSpeed / 10), 0); // 让背景开始移动
+        this.ground.autoScroll(-this.gameSpeed, 0); // 让地面开始移动
+        this.bird.body.gravity.y = 1150; // 给鸟设一个重力
+        this.readyText.destroy(); // 去除 'get ready'图片
+        this.playTip.destroy(); // 去除'玩法提示' 图片
+        game.input.onDown.add(this.fly, this); // 给鼠标按下事件绑定鸟的飞翔动作
+        game.time.events.start(); // 启动时钟事件，开始制造管道
+    };
+
+    // 鸟的飞翔动作
+
+    this.fly = function () {
+
+        this.bird.body.velocity.y = -350; // 飞翔，实质上就是给鸟设一个向上的速度
+        game.add.tween(this.bird).to({angle: -30}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
+        this.soundFly.play(); // 播放飞翔的音效
+    };
+
+    // 管道的生成
+
+    this.generatePipes = function (gap) {
+
+        gap = gap || 100; // 上下管道之间的间隙宽度
+        var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor( (WINDOW_HEIGHT - 112 - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
+        var topPipeY = position - 360; // 上方管道的位置
+        var bottomPipeY = position + gap; // 下方管道的位置
+
+        if ( this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
+
+        var topPipe = game.add.sprite( game.width, topPipeY, 'pipe', 0, this.pipeGroup); // 上方的管道
+        var bottomPipe = game.add.sprite( game.width, bottomPipeY, 'pipe', 1, this.pipeGroup); // 下方的管道
+        this.pipeGroup.setAll('checkWorldBounds', true); // 边界检测
+        this.pipeGroup.setAll('outOfBoundsKill', true); // 出边界后自动kill
+        this.pipeGroup.setAll('body.velocity.x', -this.gameSpeed); // 设置管道运动的速度
+
+    }
+
+    // 重置超出边界的管道，回收利用
+
+    this.resetPipe = function (topPipeY, bottomPipeY) {
+
+        var i = 0;
+        this.pipeGroup.forEachDead( function (pipe) { // 对组调用forEachDead方法来获取那些已经出了边界，就是“死亡”了的对象
+
+            if (pipe.y <= 0) { // 是上方的管道
+
+                pipe.reset(game.width, topPipeY); // 重置到初始位置
+                pipe.hasScored = false; // 重置为为得分
+
+            } else {
+
+                pipe.reset( game.width, bottomPipeY ); // 重置到初始位置
+
+            }
+
+            pipe.body.velocity.x = -this.gameSpeed; // 设置管道速度
+            i++;
+
+        }, this);
+
+        return i == 2; // 如果 i==2 代表有一组管道已经出了界
+
+    }
 
 };
 

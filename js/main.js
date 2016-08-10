@@ -5,7 +5,6 @@ var WINDOW_WIDTH = 320;
 var WINDOW_HEIGHT = 505;
 
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
-
 game.States = {}; // 创建一个对象来存放要用到的state
 
 // boot场景，用来做一些游戏启动前的准备
@@ -13,6 +12,14 @@ game.States = {}; // 创建一个对象来存放要用到的state
 game.States.boot = function () {
 
     this.preload = function () {
+
+        if (!game.device.desktop) { // 移动设备适应
+
+            this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+            this.scale.forcePortrait = true;
+            this.scale.refresh();
+
+        }
 
         game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
 
@@ -113,6 +120,7 @@ game.States.play = function () {
         this.soundScore = game.add.sound('score_sound');
         this.soundHitPipe = game.add.sound('hit_pipe_sound');
         this.soundHitGround = game.add.sound('hit_ground_sound');
+        this.scoreText = game.add.bitmapText( game.world.centerX - 20, 30, 'flappy_font', '0', 36);
 
         this.readyText = game.add.image(game.width / 2, 40, 'ready_text'); // get ready文字
         this.playTip = game.add.image(game.width / 2, 300, 'play_tip'); // 提示点击屏幕的图片
@@ -125,6 +133,17 @@ game.States.play = function () {
         game.input.onDown.addOnce(this.startGame, this); // 点击屏幕后正式开始游戏
 
     };
+
+    this.update = function () { // 每一帧中都要执行的代码可以写在update方法中
+
+        if (!this.hasStarted) return; // 游戏未开始，先不执行任何东西
+
+        game.physics.arcade.collide(this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
+        game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
+        if (this.bird.angle < 90) this.bird.angle += 2.5; // 下降时鸟的头朝下
+        this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新
+
+    }
 
     // 正式开始游戏
 
@@ -164,6 +183,53 @@ game.States.play = function () {
         this.bird.body.velocity.y = -350; // 飞翔，实质上就是给鸟设一个向上的速度
         game.add.tween(this.bird).to({angle: -30}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
         this.soundFly.play(); // 播放飞翔的音效
+    };
+
+    this.hitPipe = function () {
+
+        if (this.gameIsOver) return; // ###################???
+        this.soundHitPipe.play();
+        this.gameOver();
+
+    };
+
+    this.hitGround = function () {
+
+        if (this.hasHitGround) return; // ##################???
+        this.hasHitGround = true;
+        this.soundHitGround.play();
+        this.gameOver(true);
+
+    };
+
+    this.gameOver = function (show_text) {
+
+        this.gameIsOver = true;
+        this.stopGame();
+        if (show_text) this.showGameOverText();
+
+    };
+
+    this.showGameOverText = function () {
+
+        this.scoreText.destroy();
+        game.bestScore = game.bestScore || 0;
+
+        if (this.score > game.bestScore)  game.bestScore = this.score; // 最好分数
+
+        this.gameOverGroup = game.add.group(); // 添加一个gameOverGroup组
+        var gameOverText = this.gameOverGroup.create(game.width / 2, 0, 'game_over'); // game over 文字图片
+        var scoreboard = this.gameOverGroup.create(game.width / 2, 70, 'score_board'); // 分数板
+        var currentScoreText = game.add.bitmapText(game.width / 2 + 60, 105, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
+        var bestScoreText = game.add.bitmapText(game.width / 2 + 60, 153, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
+        var replayBtn = game.add.button(game.width / 2, 210, 'btn', function() { // 重玩按钮
+            game.state.start('play');
+        }, this, null, null, null, null, this.gameOverGroup);
+        gameOverText.anchor.setTo(0.5, 0);
+        scoreboard.anchor.setTo(0.5, 0);
+        replayBtn.anchor.setTo(0.5, 0);
+        this.gameOverGroup.y = 30;
+
     };
 
     // 管道的生成
@@ -209,17 +275,6 @@ game.States.play = function () {
         }, this);
 
         return i == 2; // 如果 i==2 代表有一组管道已经出了界
-
-    }
-
-    this.update = function () { // 每一帧中都要执行的代码可以写在update方法中
-
-        if (!this.hasStarted) return; // 游戏未开始，先不执行任何东西
-
-        game.physics.arcade.collide(this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
-        game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
-        if (this.bird.angle < 90) this.bird.angle += 2.5; // 下降时鸟的头朝下
-        this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新
 
     }
 

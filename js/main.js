@@ -57,10 +57,35 @@ game.States.preload = function () {
     }
 
 };
+
+// menu场景，游戏菜单
+
 game.States.menu = function () {
-}; // menu场景，游戏菜单
+
+    this.create = function () {
+
+        var bg = game.add.tileSprite( 0, 0, game.width, game.height, 'background'); // 当作背景的tileSprite
+        var ground = game.add.tileSprite( 0, game.height, 122, game.width, 122, 'ground').autoScroll(-100, 0); // 当作地面的tileSprite
+        bg.autoScroll(-10, 0); // 让背景动起来
+        ground.autoScroll(-100, 0); // 让地面动起来
+
+        var titleGroup = game.add.group(); // 创建存放标题的组
+        titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
+        var bird = titleGroup.create( 190, 10, 'bird'); // 创建bird对象并添加到组里
+        bird.animations.add('fly'); // 给鸟添加动画
+        bird.animations.play('fly', 12, true); // 播放动画
+        titleGroup.x = 35; // 调整组的水平位置
+        titleGroup.y = 100; // 调整组的垂直位置
+        game.add.tween(titleGroup).to({ y: 120}, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
+
+    }
+
+};
+
+// play场景，正式的游戏部分
+
 game.States.play = function () {
-}; // play场景，正式的游戏部分
+};
 
 // 把定义好的场景添加到游戏中
 game.state.add('boot', game.States.boot);

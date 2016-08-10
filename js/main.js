@@ -198,7 +198,7 @@ game.States.play = function () {
         if (!this.hasStarted) return; // 游戏未开始，先不执行任何东西
 
         game.physics.arcade.collide( this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
-        game.physics.arcade.collide(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
+        game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
         if (this.bird.angle < 90) this.bird.angle += 2.5; // 下降时鸟的头朝下
         this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新
 
@@ -209,7 +209,18 @@ game.States.play = function () {
     this.checkScore = function (pipe) { // 负责分数的检测和更新，pipe表示待检测的管道
         // pipe.hasScored 属性用来标识该管道是否已经得过分
         // pipe.y<0 是指一组管道中的上面那个管道，
+        // 当管道的x坐标 加上管道的宽度小于鸟的x坐标时，就表示已经飞过了管道，可以得分了。
 
+        if (!pipe.hasScored && pipe.y <= 0 && pipe.x <= this.bird.x - 17 - 54) {
+
+            pipe.hasScored = true; // 标识为已经得分
+            this.scoreText.text = ++this.score; // 更新分数的显示
+            this.soundScore.play(); // 得分的音效（############就是“猴啊！”#######）
+            return true;
+
+        }
+
+        return false;
     }
 
 };

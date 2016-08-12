@@ -250,7 +250,7 @@ game.States.play = function () {
         //var topPipeY = position - 360; // 上方管道的位置
         //var bottomPipeY = position + gap; // 下方管道的位置
 
-        var pos = 350;
+        var pos = 
         var topPipeY =  pos - (gap / 2 + PIPE_HEIGHT);
         var bottomPipeY = pos + gap / 2;
 

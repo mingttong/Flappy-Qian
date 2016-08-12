@@ -7,7 +7,7 @@ var WINDOW_WIDTH = 480,
     GRAVITY = 2000,
     FLYSPEED = -500,
     XUEQIAN_WIDTH = 71,
-    XUEQIAN_HEIGHT = 69,
+    XUEQIAN_HEIGHT = 83,
     GROUND_HEIGHT = 40,
     GAP = 250,
     PIPE_WIDTH = 52,
@@ -57,7 +57,7 @@ game.States.preload = function () {
         game.load.image('background', 'assets/background.png'); // 游戏背景
         game.load.image('ground', 'assets/ground.png'); // 地面
         game.load.image('title', 'assets/title.png'); // 游戏标题
-        game.load.spritesheet('bird', 'assets/xueqian1.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT, 1); // 鸟
+        game.load.spritesheet('bird', 'assets/xueqian1.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT); // 鸟
         game.load.image('btn', 'assets/start-button.png'); // 按钮
         game.load.spritesheet('pipe', 'assets/pipes.png', PIPE_WIDTH, PIPE_HEIGHT, 2); // 管道
         game.load.bitmapFont('flappy_font',
@@ -90,9 +90,9 @@ game.States.menu = function () {
 
         var titleGroup = game.add.group(); // 创建存放标题的组
         titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
-        var bird = titleGroup.create(190, 10, 'bird'); // 创建bird对象并添加到组里
-        bird.animations.add('fly'); // 给鸟添加动画
-        bird.animations.play('fly', 12, true); // 播放动画
+        var bird = titleGroup.create(190, 10, 'bird', 0); // 创建bird对象并添加到组里
+        //bird.animations.add('fly'); // 给鸟添加动画
+        //bird.animations.play('fly', 12, true); // 播放动画
         titleGroup.x = 35; // 调整组的水平位置
         titleGroup.y = 100; // 调整组的垂直位置
         game.add.tween(titleGroup).to({y: 120}, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
@@ -118,9 +118,9 @@ game.States.play = function () {
         this.pipeGroup = game.add.group(); // 用于存放管道的组
         this.pipeGroup.enableBody = true;
         this.ground = game.add.tileSprite(0, game.height - GROUND_HEIGHT, game.width, GROUND_HEIGHT, 'ground'); // 地板，这里先不用移动，游戏开始再动
-        this.bird = game.add.sprite(50, 150, 'bird'); // 鸟
-        this.bird.animations.add('fly'); // 添加动画
-        this.bird.animations.play('fly', 12, true); // 播放动画
+        this.bird = game.add.sprite(50, 150, 'bird', 0); // 鸟
+        //this.bird.animations.add('fall', [1], 60); // 添加下落动画
+        this.bird.animations.add('bird', [0, 1, 2], 60); // 添加上升动画
         this.bird.anchor.setTo(0.5, 0.5); // 设置中心点
         game.physics.enable(this.bird, Phaser.Physics.ARCADE); // 开启鸟的物理系统
         this.bird.body.gravity.y = 0; // 鸟的重力，未开始游戏，先让重力为0，不然鸟会掉下来
@@ -150,7 +150,26 @@ game.States.play = function () {
 
         game.physics.arcade.collide(this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
         game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
-        if (this.bird.angle < 90) this.bird.angle += 0; // 下降时鸟的头朝下
+        //if (this.bird.angle < 0) this.bird.angle += 5; // 下降时鸟的头朝下
+
+        // 来一个夸张的下落
+        if (this.gameIsOver) {
+
+            this.bird.frame = 2;
+            this.bird.angle = -120;
+
+        } else if (this.bird.body.velocity.y > 0) {
+
+            this.bird.frame = 1;
+            this.bird.angle = 90;
+
+        } else {
+
+            this.bird.frame = 0;
+            this.bird.angle = 0;
+
+        }
+
         this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新
 
     };
@@ -192,7 +211,7 @@ game.States.play = function () {
     this.fly = function () {
 
         this.bird.body.velocity.y = FLYSPEED; // 飞翔，实质上就是给鸟设一个向上的速度
-        game.add.tween(this.bird).to({angle: 0}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
+        //game.add.tween(this.bird).to({angle: -30}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
         this.soundFly.play(); // 播放飞翔的音效
     };
 

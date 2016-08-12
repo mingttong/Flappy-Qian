@@ -11,7 +11,9 @@ var WINDOW_WIDTH = 480,
     GROUND_HEIGHT = 40,
     GAP = 230,
     PIPE_WIDTH = 52,
-    PIPE_HEIGHT = 500;
+    PIPE_HEIGHT = 500,
+    POSITION_MIN = 150,
+    POSITION_MAX = 500;
 
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 game.States = {}; // 创建一个对象来存放要用到的state
@@ -246,13 +248,13 @@ game.States.play = function () {
     this.generatePipes = function (gap) {
 
         gap = gap || GAP; // 上下管道之间的间隙宽度
-        var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor((WINDOW_HEIGHT - GROUND_HEIGHT - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
+        //var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor((WINDOW_HEIGHT - GROUND_HEIGHT - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
         //var topPipeY = position - 360; // 上方管道的位置
         //var bottomPipeY = position + gap; // 下方管道的位置
 
-        var pos = 350;
-        var topPipeY =  pos - (gap / 2 + PIPE_HEIGHT);
-        var bottomPipeY = pos + gap / 2;
+        var position = selectFrom(POSITION_MIN, POSITION_MAX);
+        var topPipeY =  position - (gap / 2 + PIPE_HEIGHT);
+        var bottomPipeY = position + gap / 2;
 
         if (this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
 
@@ -262,7 +264,7 @@ game.States.play = function () {
         this.pipeGroup.setAll('outOfBoundsKill', true); // 出边界后自动kill
         this.pipeGroup.setAll('body.velocity.x', -this.gameSpeed); // 设置管道运动的速度
 
-    }
+    };
 
     // 重置超出边界的管道，回收利用
 
@@ -311,6 +313,14 @@ game.States.play = function () {
     }
 
 };
+
+function selectFrom (lowValue, highValue) {
+
+    var choice = highValue - lowValue + 1;
+
+    return Math.floor(Math.random() * choice + lowValue);
+
+}
 
 // 把定义好的场景添加到游戏中
 game.state.add('boot', game.States.boot);

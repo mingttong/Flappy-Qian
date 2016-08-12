@@ -3,17 +3,17 @@
  */
 var WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
-    GRAVITY = 1000,
-    SPEED = 250,
-    FLYSPEED = -350,
-    XUEQIAN_WIDTH = 92,
-    XUEQIAN_HEIGHT = 89,
+    SPEED = 390;
+    GRAVITY = 2000,
+    FLYSPEED = -500,
+    XUEQIAN_WIDTH = 71,
+    XUEQIAN_HEIGHT = 69,
     GROUND_HEIGHT = 40,
-    GAP = 230,
+    GAP = 250,
     PIPE_WIDTH = 52,
     PIPE_HEIGHT = 500,
-    POSITION_MIN = 150,
-    POSITION_MAX = 500;
+    POSITION_MIN = GAP / 2 + 35,
+    POSITION_MAX = WINDOW_HEIGHT - GAP / 2 - 85;
 
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 game.States = {}; // 创建一个对象来存放要用到的state
@@ -181,7 +181,7 @@ game.States.play = function () {
         this.pipeGroup.forEachExists(function(pipe) {
             pipe.body.velocity.x = 0;
         }, this);
-        this.bird.animations.stop('fly', 0);
+        //this.bird.animations.stop('fly', 0);
         game.input.onDown.remove(this.fly, this);
         game.time.events.stop(true);
 
@@ -199,7 +199,8 @@ game.States.play = function () {
     this.hitPipe = function () {
 
         if (this.gameIsOver) return; // ###################???
-        this.soundHitPipe.play();
+        //this.soundHitPipe.play();
+        this.bird.body.gravity.y = 5 * GRAVITY;
         this.gameOver();
 
     };
@@ -208,7 +209,7 @@ game.States.play = function () {
 
         if (this.hasHitGround) return; // ##################???
         this.hasHitGround = true;
-        this.soundHitGround.play();
+        //this.soundHitGround.play();
         this.gameOver(true);
 
     };

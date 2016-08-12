@@ -6,10 +6,12 @@ var WINDOW_WIDTH = 480,
     GRAVITY = 1000,
     SPEED = 250,
     FLYSPEED = -350,
-    XUEQIAN_WIDTH = 100,
-    XUEQIAN_HEIGHT = 100,
+    XUEQIAN_WIDTH = 92,
+    XUEQIAN_HEIGHT = 89,
     GROUND_HEIGHT = 40,
-    GAP = 200;
+    GAP = 230,
+    PIPE_WIDTH = 52,
+    PIPE_HEIGHT = 500;
 
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 game.States = {}; // 创建一个对象来存放要用到的state
@@ -55,7 +57,7 @@ game.States.preload = function () {
         game.load.image('title', 'assets/title.png'); // 游戏标题
         game.load.spritesheet('bird', 'assets/xueqian1.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT, 1); // 鸟
         game.load.image('btn', 'assets/start-button.png'); // 按钮
-        game.load.spritesheet('pipe', 'assets/pipes.png', 54, 320, 2); // 管道
+        game.load.spritesheet('pipe', 'assets/pipes.png', PIPE_WIDTH, PIPE_HEIGHT, 2); // 管道
         game.load.bitmapFont('flappy_font',
             'assets/fonts/flappyfont/flappyfont.png',
             'assets/fonts/flappyfont/flappyfont.fnt'); // 显示分数的数字
@@ -127,7 +129,6 @@ game.States.play = function () {
         this.soundScore = game.add.sound('score_sound');
         this.soundHitPipe = game.add.sound('hit_pipe_sound');
         this.soundHitGround = game.add.sound('hit_ground_sound');
-        this.scoreText = game.add.bitmapText( game.world.centerX - 20, 30, 'flappy_font', '0', 36);
 
         this.readyText = game.add.image(game.width / 2, 40, 'ready_text'); // get ready文字
         this.playTip = game.add.image(game.width / 2, 300, 'play_tip'); // 提示点击屏幕的图片
@@ -150,7 +151,7 @@ game.States.play = function () {
         if (this.bird.angle < 90) this.bird.angle += 0; // 下降时鸟的头朝下
         this.pipeGroup.forEachExists(this.checkScore, this); // 分数检测和更新
 
-    }
+    };
 
     // 正式开始游戏
 
@@ -160,6 +161,7 @@ game.States.play = function () {
         this.gameIsOver = false; // 游戏是否已结束的标志
         this.hasHitGround = false; // 是否撞到地面的标志
         this.hasStarted = true; // 游戏是否已经开始的标志
+        this.scoreText = game.add.bitmapText( game.world.centerX - 20, 30, 'flappy_font', '0', 36);
         this.score = 0; // 初始得分
         this.bg.autoScroll(-(this.gameSpeed / 10), 0); // 让背景开始移动
         this.ground.autoScroll(-this.gameSpeed, 0); // 让地面开始移动
@@ -244,9 +246,13 @@ game.States.play = function () {
     this.generatePipes = function (gap) {
 
         gap = gap || GAP; // 上下管道之间的间隙宽度
-        var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor((WINDOW_HEIGHT - 112 - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
-        var topPipeY = position - 360; // 上方管道的位置
-        var bottomPipeY = position + gap; // 下方管道的位置
+        var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor((WINDOW_HEIGHT - GROUND_HEIGHT - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
+        //var topPipeY = position - 360; // 上方管道的位置
+        //var bottomPipeY = position + gap; // 下方管道的位置
+
+        var pos = 350;
+        var topPipeY =  pos - (gap / 2 + PIPE_HEIGHT);
+        var bottomPipeY = pos + gap / 2;
 
         if (this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
 
@@ -292,7 +298,7 @@ game.States.play = function () {
         // pipe.y<0 是指一组管道中的上面那个管道，
         // 当管道的x坐标 加上管道的宽度小于鸟的x坐标时，就表示已经飞过了管道，可以得分了。
 
-        if (!pipe.hasScored && pipe.y <= 0 && pipe.x <= this.bird.x - 17 - 54) {
+        if (!pipe.hasScored && pipe.y <= 0 && pipe.x <= this.bird.x - 17 - PIPE_WIDTH) {
 
             pipe.hasScored = true; // 标识为已经得分
             this.scoreText.text = ++this.score; // 更新分数的显示

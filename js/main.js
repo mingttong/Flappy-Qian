@@ -10,12 +10,12 @@ var WINDOW_WIDTH = 480,
     XUEQIAN_HEIGHT = 83,
     TITLE_WIDTH = 0,
     TITLE_HEIGHT = 0,
-    GROUND_HEIGHT = 40,
+    GROUND_HEIGHT = 112,
     GAP = 250,
     PIPE_WIDTH = 52,
     PIPE_HEIGHT = 500,
     POSITION_MIN = GAP / 2 + 35,
-    POSITION_MAX = WINDOW_HEIGHT - GAP / 2 - 85;
+    POSITION_MAX = WINDOW_HEIGHT - GAP / 2 - GROUND_HEIGHT - 50;
 
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 game.States = {}; // 创建一个对象来存放要用到的state
@@ -135,7 +135,7 @@ game.States.play = function () {
         this.soundHitPipe = game.add.sound('hit_pipe_sound');
         this.soundHitGround = game.add.sound('hit_ground_sound');
 
-        this.readyText = game.add.image(game.width / 2, 40, 'ready_text'); // get ready文字
+        this.readyText = game.add.image(game.width / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
         this.playTip = game.add.image(game.width / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片
         this.readyText.anchor.setTo(0.5, 0);
         this.playTip.anchor.setTo(0.5, 0);

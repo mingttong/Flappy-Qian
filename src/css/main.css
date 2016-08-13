@@ -1,0 +1,10 @@
+body {
+    background: #430;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    overflow: hidden;
+}
+#game {
+    display: inline-block;
+}

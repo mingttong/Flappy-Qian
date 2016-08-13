@@ -5,9 +5,11 @@ var WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
     GRAVITY = 2000,
-    FLYSPEED = -500,
+    FLYSPEED = -600,
     XUEQIAN_WIDTH = 71,
     XUEQIAN_HEIGHT = 83,
+    TITLE_WIDTH = 0,
+    TITLE_HEIGHT = 0,
     GROUND_HEIGHT = 40,
     GAP = 250,
     PIPE_WIDTH = 52,
@@ -89,8 +91,8 @@ game.States.menu = function () {
         game.add.tileSprite(0, game.height - GROUND_HEIGHT, game.width, GROUND_HEIGHT, 'ground').autoScroll(-100, 0); // 地板
 
         var titleGroup = game.add.group(); // 创建存放标题的组
-        titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
-        var bird = titleGroup.create(190, 10, 'bird', 0); // 创建bird对象并添加到组里
+        var title = titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
+        var bird = titleGroup.create((title.width - XUEQIAN_WIDTH) / 2, title.height + 30, 'bird', 1); // 创建bird对象并添加到组里
         //bird.animations.add('fly'); // 给鸟添加动画
         //bird.animations.play('fly', 12, true); // 播放动画
         titleGroup.x = 35; // 调整组的水平位置
@@ -118,7 +120,7 @@ game.States.play = function () {
         this.pipeGroup = game.add.group(); // 用于存放管道的组
         this.pipeGroup.enableBody = true;
         this.ground = game.add.tileSprite(0, game.height - GROUND_HEIGHT, game.width, GROUND_HEIGHT, 'ground'); // 地板，这里先不用移动，游戏开始再动
-        this.bird = game.add.sprite(50, 150, 'bird', 0); // 鸟
+        this.bird = game.add.sprite(150, 300, 'bird', 0); // 鸟
         //this.bird.animations.add('fall', [1], 60); // 添加下落动画
         this.bird.animations.add('bird', [0, 1, 2], 60); // 添加上升动画
         this.bird.anchor.setTo(0.5, 0.5); // 设置中心点
@@ -150,18 +152,18 @@ game.States.play = function () {
 
         game.physics.arcade.collide(this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
         game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
+        this.bird.body.collideWorldBounds = true;
         //if (this.bird.angle < 0) this.bird.angle += 5; // 下降时鸟的头朝下
 
         // 来一个夸张的下落
         if (this.gameIsOver) {
 
             this.bird.frame = 2;
-            this.bird.angle = -120;
+            this.bird.angle = -30;
 
         } else if (this.bird.body.velocity.y > 0) {
 
             this.bird.frame = 1;
-            this.bird.angle = 90;
 
         } else {
 

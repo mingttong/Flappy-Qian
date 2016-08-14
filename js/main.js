@@ -51,7 +51,7 @@ game.States.boot = function () {
 
         }
 
-        game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
+        //game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
 
     };
 
@@ -156,7 +156,6 @@ game.States.preload = function () {
     };
 
     this.create = function () {
-        alert();
         game.state.start('menu'); // 当以上所有资源都加载完成后就可以进入menu游戏菜单场景了
     }
 

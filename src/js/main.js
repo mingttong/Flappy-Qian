@@ -19,6 +19,13 @@ var SCORESOUNDS_NUM = 18,
     POSITION_MIN = GAP / 2 + 35,
     POSITION_MAX = WINDOW_HEIGHT - GAP / 2 - GROUND_HEIGHT - 50;
 
+var TEXT_TIPS = '温馨提示：\n为了不浪费生命，请：\n打开音量，调到最大\n注意周围环境，这很丢脸！';
+var TEXT_FONT = '"Segoe UI", "Microsoft YaHei", 宋体, sans-serif';
+var TEXT_LOADING = 'Loading...\n\n进程：%s %';
+
+var tipsText,
+    loadingText;
+
 var _baseUrl = '';
 
 var currentScoreSound = null,
@@ -44,7 +51,7 @@ game.States.boot = function () {
 
         }
 
-        game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
+        //game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
 
     };
 
@@ -63,14 +70,53 @@ function loadAudio ( key, path) {
 
 }
 
+function showLoadingText(percent) {
+
+    loadingText.setText(TEXT_LOADING.replace('%s', percent));
+
+}
+
+function initLoadingText() {
+
+    tipsText = game.add.text(
+        game.world.width / 2,
+        game.world.height / 3,
+        TEXT_TIPS,
+        {
+            font: '16px' + TEXT_FONT,
+            fill: '#fff',
+            align: 'center'
+        }
+    );
+    tipsText.anchor.setTo(0.5, 0.5);
+
+    loadingText = game.add.text(
+        game.world.width / 2,
+        game.world.height / 2,
+        '',
+        {
+            font: '24px' + TEXT_FONT,
+            fill: '#f00',
+            align: 'center'
+        }
+    );
+    loadingText.anchor.setTo(0.5, 0.5);
+    showLoadingText(0);
+
+}
+
 // preload场景，用来显示资源加载速度
 
 game.States.preload = function () {
 
     this.preload = function () {
 
-        var preloadSprite = game.add.sprite(50, game.height / 2, 'loading'); // 创建显示loading进度的sprite
-        game.load.setPreloadSprite(preloadSprite); // 用setpreloadSprite方法来实现动态进度条的效果
+        initLoadingText();
+
+        //var preloadSprite = game.add.sprite(50, game.height / 2, 'loading'); // 创建显示loading进度的sprite
+        //game.load.setPreloadSprite(preloadSprite); // 用setpreloadSprite方法来实现动态进度条的效果
+
+        game.load.onFileComplete.add(showLoadingText);
 
         //以下为要加载的资源
         game.load.image('background', 'assets/background.png'); // 游戏背景

@@ -1,7 +1,9 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
-var WINDOW_WIDTH = 480,
+var SCORESOUNDS_NUM = 18,
+    HURTSOUNDS_NUM = 15,
+    WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
     GRAVITY = 2000,
@@ -16,6 +18,8 @@ var WINDOW_WIDTH = 480,
     PIPE_HEIGHT = 500,
     POSITION_MIN = GAP / 2 + 35,
     POSITION_MAX = WINDOW_HEIGHT - GAP / 2 - GROUND_HEIGHT - 50;
+
+var _baseUrl = '';
 
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 game.States = {}; // 创建一个对象来存放要用到的state
@@ -46,6 +50,13 @@ game.States.boot = function () {
 
 };
 
+
+function loadAudio ( key, path) {
+
+    game.load.audio(key, [path + '.ogg', path + '.mp3']);
+
+}
+
 // preload场景，用来显示资源加载速度
 
 game.States.preload = function () {
@@ -65,10 +76,26 @@ game.States.preload = function () {
         game.load.bitmapFont('flappy_font',
             'assets/fonts/flappyfont/flappyfont.png',
             'assets/fonts/flappyfont/flappyfont.fnt'); // 显示分数的数字
-        game.load.audio('fly_sound', 'assets/flap.wav'); // 飞翔的音效（#######就是“耶耶！”#######）
-        game.load.audio('score_sound', 'assets/score.wav'); // 得分的音效（##########就是最后的“你们啊！Naive!"########)
-        game.load.audio('hit_pipe_sound', 'assets/pipe-hit.wav'); // 撞击管道的音效
-        game.load.audio('hit_ground_sound', 'assets/ouch.wav'); // 撞击地面的音效
+
+        //game.load.audio('fly_sound', 'assets/flap.wav'); // 飞翔的音效（#######就是“耶耶！”#######）
+        //game.load.audio('score_sound', 'assets/score.wav'); // 得分的音效（##########就是最后的“你们啊！Naive!"########)
+        //game.load.audio('hit_pipe_sound', 'assets/pipe-hit.wav'); // 撞击管道的音效
+        //game.load.audio('hit_ground_sound', 'assets/ouch.wav'); // 撞击地面的音效
+
+        loadAudio('flap', _baseUrl + 'sounds/flap');
+
+        for (var i = 1; i <= SCORESOUNDS_NUM; i++) {
+
+            loadAudio('score' + i, _baseUrl + 'sounds/score' + i);
+
+        }
+
+        for (var i = 1; i <= HURTSOUNDS_NUM; i++) {
+
+            loadAudio('hurt' + i, _baseUrl + 'sounds/hurt' + i);
+
+        }
+
         game.load.image('ready_text', 'assets/get-ready.png'); // get ready图片
         game.load.image('play_tip', 'assets/instructions.png'); // 玩法提示图片
         game.load.image('game_over', 'assets/gameover.png'); // gameover图片
@@ -111,6 +138,16 @@ game.States.menu = function () {
     }
 };
 
+function initSounds (result, key, len) {
+
+    for (var i = 1; i <= len; i++) {
+
+        result.push(game.add.audio(key + i));
+
+    }
+
+}
+
 // play场景，正式的游戏部分
 
 game.States.play = function () {
@@ -130,10 +167,13 @@ game.States.play = function () {
         game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
         this.ground.body.immovable = true; // 让地面在物理环境中固定不动
 
-        this.soundFly = game.add.sound('fly_sound');
-        this.soundScore = game.add.sound('score_sound');
-        this.soundHitPipe = game.add.sound('hit_pipe_sound');
-        this.soundHitGround = game.add.sound('hit_ground_sound');
+        //this.soundFly = game.add.sound('fly_sound');
+        //this.soundScore = game.add.sound('score_sound');
+        //this.soundHitPipe = game.add.sound('hit_pipe_sound');
+        //this.soundHitGround = game.add.sound('hit_ground_sound');
+
+        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM);
+        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM);
 
         this.readyText = game.add.image(game.width / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
         this.playTip = game.add.image(game.width / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片
@@ -214,7 +254,7 @@ game.States.play = function () {
 
         this.bird.body.velocity.y = FLYSPEED; // 飞翔，实质上就是给鸟设一个向上的速度
         //game.add.tween(this.bird).to({angle: -30}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
-        this.soundFly.play(); // 播放飞翔的音效
+        //this.soundFly.play(); // 播放飞翔的音效
     };
 
     this.hitPipe = function () {
@@ -326,7 +366,7 @@ game.States.play = function () {
 
             pipe.hasScored = true; // 标识为已经得分
             this.scoreText.text = ++this.score; // 更新分数的显示
-            this.soundScore.play(); // 得分的音效（############就是“猴啊！”#######）
+            //this.soundScore.play(); // 得分的音效（############就是“猴啊！”#######）
             return true;
 
         }

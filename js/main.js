@@ -155,17 +155,17 @@ function initSounds (result, key, len) {
 
 }
 
-function randomPlaySound (list, count) {
+function randomPlaySound (list, sounds_num) {
 
     var sound;
 
-    if (count == 1) {
+    if (sounds_num == 1) {
 
         sound = list[0];
 
-    } else if (count > 1) {
+    } else if (sounds_num > 1) {
 
-        sound = list[selectFrom(0,count)];
+        sound = list[Math.floor(Math.random() * sounds_num)];
         sound.play();
 
     }
@@ -238,7 +238,7 @@ game.States.play = function () {
         //this.soundHitPipe = game.add.sound('hit_pipe_sound');
         //this.soundHitGround = game.add.sound('hit_ground_sound');
 
-        flapSound = game.add.audio('flap', 0.5);
+        flapSound = game.add.audio('flap', 0.08);
 
         initSounds(scoreSounds, 'score', SCORESOUNDS_NUM);
         initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM);

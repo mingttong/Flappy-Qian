@@ -364,9 +364,9 @@ game.States.play = function () {
 
         this.gameOverGroup = game.add.group(); // 添加一个gameOverGroup组
         var gameOverText = this.gameOverGroup.create(game.width / 2, 0, 'game_over'); // game over 文字图片
-        var scoreboard = this.gameOverGroup.create(game.width / 2, 80, 'score_board'); // 分数板
-        var currentScoreText = game.add.bitmapText(game.width / 2 + 35, 285, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
-        var bestScoreText = game.add.bitmapText(game.width / 2 + 35, 323, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
+        var scoreboard = this.gameOverGroup.create(game.width / 2, 100, 'score_board'); // 分数板
+        var currentScoreText = game.add.bitmapText(game.width / 2 + 35, 305, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
+        var bestScoreText = game.add.bitmapText(game.width / 2 + 35, 343, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
         var replayBtn = game.add.button(game.width * 4 / 5, 90, 'replayBtn', function() { // 重玩按钮
             currentHurtSound.stop();
             currentHurtSound = null;
@@ -375,7 +375,7 @@ game.States.play = function () {
         gameOverText.anchor.setTo(0.5, 0);
         scoreboard.anchor.setTo(0.5, 0);
         replayBtn.anchor.setTo(0.5, 0);
-        this.gameOverGroup.y = WINDOW_HEIGHT / 9;
+        this.gameOverGroup.y = WINDOW_HEIGHT / 15;
 
     };
 

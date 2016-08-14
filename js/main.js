@@ -211,7 +211,7 @@ function randomPlaySound (list, sounds_num) {
 
     } else if (sounds_num > 1) {
 
-        sound = list[Math.floor(Math.random() * sounds_num)];
+        sound = list[selectFrom(1,sounds_num)];
         sound.play();
 
     }
@@ -421,7 +421,7 @@ game.States.play = function () {
         gameOverText.anchor.setTo(0.5, 0);
         scoreboard.anchor.setTo(0.5, 0);
         replayBtn.anchor.setTo(0.5, 0);
-        this.gameOverGroup.y = WINDOW_HEIGHT / 15;
+        this.gameOverGroup.y = WINDOW_HEIGHT / 10;
 
     };
 

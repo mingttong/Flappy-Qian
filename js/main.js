@@ -21,6 +21,12 @@ var SCORESOUNDS_NUM = 18,
 
 var _baseUrl = '';
 
+var currentScoreSound = null,
+    currentHurtSound = null,
+    scoreSounds = [],
+    hurtSounds = [],
+    flapSound;
+
 var game = new Phaser.Game(WINDOW_WIDTH, WINDOW_HEIGHT, Phaser.AUTO, 'game'); // 实例化一个Phaser的游戏实例
 game.States = {}; // 创建一个对象来存放要用到的state
 
@@ -70,8 +76,9 @@ game.States.preload = function () {
         game.load.image('background', 'assets/background.png'); // 游戏背景
         game.load.image('ground', 'assets/ground.png'); // 地面
         game.load.image('title', 'assets/title.png'); // 游戏标题
-        game.load.spritesheet('bird', 'assets/xueqian1.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT); // 鸟
-        game.load.image('btn', 'assets/start-button.png'); // 按钮
+        game.load.spritesheet('bird', 'assets/qian.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT); // 鸟
+        game.load.image('startBtn', 'assets/start-button.png'); // 按钮
+        game.load.image('replayBtn', 'assets/give-me-five.png');
         game.load.spritesheet('pipe', 'assets/pipes.png', PIPE_WIDTH, PIPE_HEIGHT, 2); // 管道
         game.load.bitmapFont('flappy_font',
             'assets/fonts/flappyfont/flappyfont.png',
@@ -129,11 +136,11 @@ game.States.menu = function () {
 
         // 添加一个按钮
 
-        var btn = game.add.button(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 2 / 3, 'btn', function () {
+        var startBtn = game.add.button(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 2 / 3, 'startBtn', function () {
             game.state.start('play'); // 点击按钮时跳转到play场景
         });
 
-        btn.anchor.setTo(0.5, 0.5); // 设置按钮的中心点
+        startBtn.anchor.setTo(0.5, 0.5); // 设置按钮的中心点
 
     }
 };
@@ -143,6 +150,65 @@ function initSounds (result, key, len) {
     for (var i = 1; i <= len; i++) {
 
         result.push(game.add.audio(key + i));
+
+    }
+
+}
+
+function randomPlaySound (list, count) {
+
+    var sound;
+
+    if (count == 1) {
+
+        sound = list[0];
+
+    } else if (count > 1) {
+
+        sound = list[selectFrom(0,count)];
+        sound.play();
+
+    }
+
+    return sound;
+
+}
+
+function playScoreSound() {
+
+    if (currentScoreSound) {
+
+        currentScoreSound.stop();
+
+    }
+
+    currentScoreSound = randomPlaySound(scoreSounds, SCORESOUNDS_NUM);
+
+    console.log(currentScoreSound);
+
+}
+
+function playHurtSound() {
+
+    if (currentScoreSound) {
+
+        currentScoreSound.stop();
+
+    }
+
+    if (currentHurtSound) return;
+
+    currentHurtSound = randomPlaySound(hurtSounds, HURTSOUNDS_NUM);
+
+    console.log(currentHurtSound);
+
+}
+
+function playFlapSound() {
+
+    if (!flapSound.isPlaying) {
+
+        flapSound.play();
 
     }
 
@@ -172,6 +238,8 @@ game.States.play = function () {
         //this.soundHitPipe = game.add.sound('hit_pipe_sound');
         //this.soundHitGround = game.add.sound('hit_ground_sound');
 
+        flapSound = game.add.audio('flap', 0.5);
+
         initSounds(scoreSounds, 'score', SCORESOUNDS_NUM);
         initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM);
 
@@ -181,7 +249,7 @@ game.States.play = function () {
         this.playTip.anchor.setTo(0.5, 0);
 
         this.hasStarted = false; // 游戏是否开始
-        game.time.events.loop(1500, this.generatePipes, this); // 利用时钟事件来循环产生管道
+        game.time.events.loop(3500, this.generatePipes, this); // 利用时钟事件来循环产生管道
         game.time.events.stop(false); // 先不要启动时钟 ##########即使没调用start方法，它也会自动启用，去看一看这是不是一个bug##########
         game.input.onDown.addOnce(this.startGame, this); // 点击屏幕后正式开始游戏
 
@@ -255,6 +323,7 @@ game.States.play = function () {
         this.bird.body.velocity.y = FLYSPEED; // 飞翔，实质上就是给鸟设一个向上的速度
         //game.add.tween(this.bird).to({angle: -30}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
         //this.soundFly.play(); // 播放飞翔的音效
+        playFlapSound();
     };
 
     this.hitPipe = function () {
@@ -277,6 +346,7 @@ game.States.play = function () {
 
     this.gameOver = function (show_text) {
 
+        playHurtSound();
         this.gameIsOver = true;
         this.stopGame();
         if (show_text) this.showGameOverText();
@@ -292,16 +362,18 @@ game.States.play = function () {
 
         this.gameOverGroup = game.add.group(); // 添加一个gameOverGroup组
         var gameOverText = this.gameOverGroup.create(game.width / 2, 0, 'game_over'); // game over 文字图片
-        var scoreboard = this.gameOverGroup.create(game.width / 2, 70, 'score_board'); // 分数板
-        var currentScoreText = game.add.bitmapText(game.width / 2 + 60, 105, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
-        var bestScoreText = game.add.bitmapText(game.width / 2 + 60, 153, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
-        var replayBtn = game.add.button(game.width / 2, 210, 'btn', function() { // 重玩按钮
+        var scoreboard = this.gameOverGroup.create(game.width / 2, 80, 'score_board'); // 分数板
+        var currentScoreText = game.add.bitmapText(game.width / 2 + 60, 304, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
+        var bestScoreText = game.add.bitmapText(game.width / 2 + 60, 352, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
+        var replayBtn = game.add.button(game.width * 4 / 5, 90, 'replayBtn', function() { // 重玩按钮
+            currentHurtSound.stop();
+            currentHurtSound = null;
             game.state.start('play');
         }, this, null, null, null, null, this.gameOverGroup);
         gameOverText.anchor.setTo(0.5, 0);
         scoreboard.anchor.setTo(0.5, 0);
         replayBtn.anchor.setTo(0.5, 0);
-        this.gameOverGroup.y = WINDOW_HEIGHT / 5;
+        this.gameOverGroup.y = WINDOW_HEIGHT / 9;
 
     };
 
@@ -366,6 +438,7 @@ game.States.play = function () {
 
             pipe.hasScored = true; // 标识为已经得分
             this.scoreText.text = ++this.score; // 更新分数的显示
+            playScoreSound();
             //this.soundScore.play(); // 得分的音效（############就是“猴啊！”#######）
             return true;
 

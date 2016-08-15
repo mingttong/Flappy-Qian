@@ -51,6 +51,9 @@ game.States.boot = function () {
 
         }
 
+        //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+        //game.scale.setScreenSize();
+
         //game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
 
     };

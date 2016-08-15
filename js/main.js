@@ -6,7 +6,7 @@ var SCORESOUNDS_NUM = 18,
     WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
-    GRAVITY = 2000,
+GRAVITY = 2000,
     FLYSPEED = -610,
     XUEQIAN_WIDTH = 73,
     XUEQIAN_HEIGHT = 83,
@@ -51,11 +51,6 @@ game.States.boot = function () {
 
         }
 
-        //game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-        //game.scale.setScreenSize();
-
-        //game.load.image('loading', 'assets/preloader.gif'); // 加载进度条图片资源
-
     };
 
     this.create = function () {
@@ -67,7 +62,7 @@ game.States.boot = function () {
 };
 
 
-function loadAudio ( key, path) {
+function loadAudio(key, path) {
 
     game.load.audio(key, [path + '.ogg', path + '.mp3']);
 
@@ -116,9 +111,6 @@ game.States.preload = function () {
 
         initLoadingText();
 
-        //var preloadSprite = game.add.sprite(50, game.height / 2, 'loading'); // 创建显示loading进度的sprite
-        //game.load.setPreloadSprite(preloadSprite); // 用setpreloadSprite方法来实现动态进度条的效果
-
         game.load.onFileComplete.add(showLoadingText);
 
         //以下为要加载的资源
@@ -132,11 +124,6 @@ game.States.preload = function () {
         game.load.bitmapFont('flappy_font',
             'assets/fonts/flappyfont/flappyfont.png',
             'assets/fonts/flappyfont/flappyfont.fnt'); // 显示分数的数字
-
-        //game.load.audio('fly_sound', 'assets/flap.wav'); // 飞翔的音效（#######就是“耶耶！”#######）
-        //game.load.audio('score_sound', 'assets/score.wav'); // 得分的音效（##########就是最后的“你们啊！Naive!"########)
-        //game.load.audio('hit_pipe_sound', 'assets/pipe-hit.wav'); // 撞击管道的音效
-        //game.load.audio('hit_ground_sound', 'assets/ouch.wav'); // 撞击地面的音效
 
         loadAudio('flap', _baseUrl + 'sounds/flap');
 
@@ -176,12 +163,10 @@ game.States.menu = function () {
         var titleGroup = game.add.group(); // 创建存放标题的组
         var title = titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
         var bird = titleGroup.create((title.width - XUEQIAN_WIDTH) / 2, title.height + 30, 'bird', 1); // 创建bird对象并添加到组里
-        //bird.animations.add('fly'); // 给鸟添加动画
-        //bird.animations.play('fly', 12, true); // 播放动画
         var titl_y = WINDOW_HEIGHT / 5;
         titleGroup.x = (WINDOW_WIDTH - title.width) / 2; // 调整组的水平位置
         titleGroup.y = titl_y; // 调整组的垂直位置
-        game.add.tween(titleGroup).to({y: titl_y + 50 }, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
+        game.add.tween(titleGroup).to({y: titl_y + 50}, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
 
         // 添加一个按钮
 
@@ -194,7 +179,7 @@ game.States.menu = function () {
     }
 };
 
-function initSounds (result, key, len) {
+function initSounds(result, key, len) {
 
     for (var i = 1; i <= len; i++) {
 
@@ -204,7 +189,7 @@ function initSounds (result, key, len) {
 
 }
 
-function randomPlaySound (list, sounds_num) {
+function randomPlaySound(list, sounds_num) {
 
     var sound;
 
@@ -214,7 +199,7 @@ function randomPlaySound (list, sounds_num) {
 
     } else if (sounds_num > 1) {
 
-        sound = list[selectFrom(1,sounds_num)];
+        sound = list[selectFrom(1, sounds_num)];
         sound.play();
 
     }
@@ -274,18 +259,12 @@ game.States.play = function () {
         this.pipeGroup.enableBody = true;
         this.ground = game.add.tileSprite(0, WINDOW_HEIGHT - GROUND_HEIGHT, WINDOW_WIDTH, GROUND_HEIGHT, 'ground'); // 地板，这里先不用移动，游戏开始再动
         this.bird = game.add.sprite(150, 300, 'bird', 0); // 鸟
-        //this.bird.animations.add('fall', [1], 60); // 添加下落动画
         this.bird.animations.add('bird', [0, 1, 2], 60); // 添加上升动画
         this.bird.anchor.setTo(0.5, 0.5); // 设置中心点
         game.physics.enable(this.bird, Phaser.Physics.ARCADE); // 开启鸟的物理系统
         this.bird.body.gravity.y = 0; // 鸟的重力，未开始游戏，先让重力为0，不然鸟会掉下来
         game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
         this.ground.body.immovable = true; // 让地面在物理环境中固定不动
-
-        //this.soundFly = game.add.sound('fly_sound');
-        //this.soundScore = game.add.sound('score_sound');
-        //this.soundHitPipe = game.add.sound('hit_pipe_sound');
-        //this.soundHitGround = game.add.sound('hit_ground_sound');
 
         flapSound = game.add.audio('flap', 0.08);
 
@@ -311,7 +290,6 @@ game.States.play = function () {
         game.physics.arcade.collide(this.bird, this.ground, this.hitGround, null, this); // 检测与地面的碰撞
         game.physics.arcade.overlap(this.bird, this.pipeGroup, this.hitPipe, null, this); // 检测与管道的碰撞
         this.bird.body.collideWorldBounds = true;
-        //if (this.bird.angle < 0) this.bird.angle += 5; // 下降时鸟的头朝下
 
         // 来一个夸张的下落
         if (this.gameIsOver) {
@@ -343,7 +321,7 @@ game.States.play = function () {
         this.gameIsOver = false; // 游戏是否已结束的标志
         this.hasHitGround = false; // 是否撞到地面的标志
         this.hasStarted = true; // 游戏是否已经开始的标志
-        this.scoreText = game.add.bitmapText( game.world.centerX - 20, 30, 'flappy_font', '0', 36);
+        this.scoreText = game.add.bitmapText(game.world.centerX - 20, 30, 'flappy_font', '0', 36);
         this.score = 0; // 初始得分
         this.bg.autoScroll(-(this.gameSpeed / 10), 0); // 让背景开始移动
         this.ground.autoScroll(-this.gameSpeed, 0); // 让地面开始移动
@@ -358,7 +336,7 @@ game.States.play = function () {
 
         this.bg.stopScroll();
         this.ground.stopScroll();
-        this.pipeGroup.forEachExists(function(pipe) {
+        this.pipeGroup.forEachExists(function (pipe) {
             pipe.body.velocity.x = 0;
         }, this);
         //this.bird.animations.stop('fly', 0);
@@ -372,9 +350,8 @@ game.States.play = function () {
     this.fly = function () {
 
         this.bird.body.velocity.y = FLYSPEED; // 飞翔，实质上就是给鸟设一个向上的速度
-        //game.add.tween(this.bird).to({angle: -30}, 100, null, true, 0, 0, false); // 上升时头朝上的动画
-        //this.soundFly.play(); // 播放飞翔的音效
         playFlapSound();
+
     };
 
     this.hitPipe = function () {
@@ -390,7 +367,6 @@ game.States.play = function () {
 
         if (this.hasHitGround) return; // ##################???
         this.hasHitGround = true;
-        //this.soundHitGround.play();
         this.gameOver(true);
 
     };
@@ -416,7 +392,7 @@ game.States.play = function () {
         var scoreboard = this.gameOverGroup.create(WINDOW_WIDTH / 2, 100, 'score_board'); // 分数板
         var currentScoreText = game.add.bitmapText(WINDOW_WIDTH / 2 + 35, 305, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
         var bestScoreText = game.add.bitmapText(WINDOW_WIDTH / 2 + 35, 343, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
-        var replayBtn = game.add.button(WINDOW_WIDTH * 4 / 5, 90, 'replayBtn', function() { // 重玩按钮
+        var replayBtn = game.add.button(WINDOW_WIDTH * 4 / 5, 90, 'replayBtn', function () { // 重玩按钮
             currentHurtSound.stop();
             currentHurtSound = null;
             game.state.start('play');
@@ -433,12 +409,9 @@ game.States.play = function () {
     this.generatePipes = function (gap) {
 
         gap = gap || GAP; // 上下管道之间的间隙宽度
-        //var position = (WINDOW_HEIGHT - WINDOW_WIDTH - gap) + Math.floor((WINDOW_HEIGHT - GROUND_HEIGHT - 30 - gap - WINDOW_HEIGHT + WINDOW_WIDTH + gap) * Math.random()); // 计算出一个上下管道之间的间隙随机位置
-        //var topPipeY = position - 360; // 上方管道的位置
-        //var bottomPipeY = position + gap; // 下方管道的位置
 
         var position = selectFrom(POSITION_MIN, POSITION_MAX);
-        var topPipeY =  position - (gap / 2 + PIPE_HEIGHT);
+        var topPipeY = position - (gap / 2 + PIPE_HEIGHT);
         var bottomPipeY = position + gap / 2;
 
         if (this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
@@ -500,7 +473,7 @@ game.States.play = function () {
 
 };
 
-function selectFrom (lowValue, highValue) {
+function selectFrom(lowValue, highValue) {
 
     var choice = highValue - lowValue + 1;
 

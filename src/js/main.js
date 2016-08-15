@@ -167,15 +167,15 @@ game.States.menu = function () {
 
     this.create = function () {
 
-        game.add.tileSprite(0, 0, game.width, game.height, 'background').autoScroll(-10, 0); // 背景图
-        game.add.tileSprite(0, game.height - GROUND_HEIGHT, game.width, GROUND_HEIGHT, 'ground').autoScroll(-100, 0); // 地板
+        game.add.tileSprite(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 'background').autoScroll(-10, 0); // 背景图
+        game.add.tileSprite(0, WINDOW_HEIGHT - GROUND_HEIGHT, WINDOW_WIDTH, GROUND_HEIGHT, 'ground').autoScroll(-100, 0); // 地板
 
         var titleGroup = game.add.group(); // 创建存放标题的组
         var title = titleGroup.create(0, 0, 'title'); // 通过组的create方法创建标题图片并添加到组里
         var bird = titleGroup.create((title.width - XUEQIAN_WIDTH) / 2, title.height + 30, 'bird', 1); // 创建bird对象并添加到组里
         //bird.animations.add('fly'); // 给鸟添加动画
         //bird.animations.play('fly', 12, true); // 播放动画
-        var titl_y = WINDOW_HEIGHT / 5
+        var titl_y = WINDOW_HEIGHT / 5;
         titleGroup.x = (WINDOW_WIDTH - title.width) / 2; // 调整组的水平位置
         titleGroup.y = titl_y; // 调整组的垂直位置
         game.add.tween(titleGroup).to({y: titl_y + 50 }, 1000, null, true, 0, Number.MAX_VALUE, true); // 对这个组添加一个tween动画，让它不停的上下移动
@@ -266,10 +266,10 @@ game.States.play = function () {
 
     this.create = function () {
 
-        this.bg = game.add.tileSprite(0, 0, game.width, game.height, 'background'); // 背景图，这里先不用移动，等游戏开始后再移动。
+        this.bg = game.add.tileSprite(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT, 'background'); // 背景图，这里先不用移动，等游戏开始后再移动。
         this.pipeGroup = game.add.group(); // 用于存放管道的组
         this.pipeGroup.enableBody = true;
-        this.ground = game.add.tileSprite(0, game.height - GROUND_HEIGHT, game.width, GROUND_HEIGHT, 'ground'); // 地板，这里先不用移动，游戏开始再动
+        this.ground = game.add.tileSprite(0, WINDOW_HEIGHT - GROUND_HEIGHT, WINDOW_WIDTH, GROUND_HEIGHT, 'ground'); // 地板，这里先不用移动，游戏开始再动
         this.bird = game.add.sprite(150, 300, 'bird', 0); // 鸟
         //this.bird.animations.add('fall', [1], 60); // 添加下落动画
         this.bird.animations.add('bird', [0, 1, 2], 60); // 添加上升动画
@@ -289,8 +289,8 @@ game.States.play = function () {
         initSounds(scoreSounds, 'score', SCORESOUNDS_NUM);
         initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM);
 
-        this.readyText = game.add.image(game.width / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
-        this.playTip = game.add.image(game.width / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片
+        this.readyText = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
+        this.playTip = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片
         this.readyText.anchor.setTo(0.5, 0);
         this.playTip.anchor.setTo(0.5, 0);
 
@@ -409,11 +409,11 @@ game.States.play = function () {
         if (this.score > game.bestScore)  game.bestScore = this.score; // 最好分数
 
         this.gameOverGroup = game.add.group(); // 添加一个gameOverGroup组
-        var gameOverText = this.gameOverGroup.create(game.width / 2, 0, 'game_over'); // game over 文字图片
-        var scoreboard = this.gameOverGroup.create(game.width / 2, 100, 'score_board'); // 分数板
-        var currentScoreText = game.add.bitmapText(game.width / 2 + 35, 305, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
-        var bestScoreText = game.add.bitmapText(game.width / 2 + 35, 343, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
-        var replayBtn = game.add.button(game.width * 4 / 5, 90, 'replayBtn', function() { // 重玩按钮
+        var gameOverText = this.gameOverGroup.create(WINDOW_WIDTH / 2, 0, 'game_over'); // game over 文字图片
+        var scoreboard = this.gameOverGroup.create(WINDOW_WIDTH / 2, 100, 'score_board'); // 分数板
+        var currentScoreText = game.add.bitmapText(WINDOW_WIDTH / 2 + 35, 305, 'flappy_font', this.score + ' ', 20, this.gameOverGroup);
+        var bestScoreText = game.add.bitmapText(WINDOW_WIDTH / 2 + 35, 343, 'flappy_font', game.bestScore + ' ', 20, this.gameOverGroup);
+        var replayBtn = game.add.button(WINDOW_WIDTH * 4 / 5, 90, 'replayBtn', function() { // 重玩按钮
             currentHurtSound.stop();
             currentHurtSound = null;
             game.state.start('play');
@@ -440,8 +440,8 @@ game.States.play = function () {
 
         if (this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
 
-        var topPipe = game.add.sprite(game.width, topPipeY, 'pipe', 0, this.pipeGroup); // 上方的管道
-        var bottomPipe = game.add.sprite(game.width, bottomPipeY, 'pipe', 1, this.pipeGroup); // 下方的管道
+        var topPipe = game.add.sprite(WINDOW_WIDTH, topPipeY, 'pipe', 0, this.pipeGroup); // 上方的管道
+        var bottomPipe = game.add.sprite(WINDOW_WIDTH, bottomPipeY, 'pipe', 1, this.pipeGroup); // 下方的管道
         this.pipeGroup.setAll('checkWorldBounds', true); // 边界检测
         this.pipeGroup.setAll('outOfBoundsKill', true); // 出边界后自动kill
         this.pipeGroup.setAll('body.velocity.x', -this.gameSpeed); // 设置管道运动的速度
@@ -457,12 +457,12 @@ game.States.play = function () {
 
             if (pipe.y <= 0) { // 是上方的管道
 
-                pipe.reset(game.width, topPipeY); // 重置到初始位置
+                pipe.reset(WINDOW_WIDTH, topPipeY); // 重置到初始位置
                 pipe.hasScored = false; // 重置为为得分
 
             } else {
 
-                pipe.reset(game.width, bottomPipeY); // 重置到初始位置
+                pipe.reset(WINDOW_WIDTH, bottomPipeY); // 重置到初始位置
 
             }
 

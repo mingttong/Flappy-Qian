@@ -410,15 +410,9 @@ game.States.play = function () {
 
         gap = gap || GAP; // 上下管道之间的间隙宽度
 
-<<<<<<< HEAD
         var position = selectFrom(POSITION_MIN, POSITION_MAX);
         var topPipeY = position - (gap / 2 + PIPE_HEIGHT);
         var bottomPipeY = position + gap / 2;
-=======
-        var pos = 
-        var topPipeY =  pos - (gap / 2 + PIPE_HEIGHT);
-        var bottomPipeY = pos + gap / 2;
->>>>>>> 0b6320efe0be0954c0b182dab8af7528f315b188
 
         if (this.resetPipe(topPipeY, bottomPipeY)) return; // 如果有除了边界的管道，就给他们重新设定，然后再拿来用，不再制造芯的管道了（精妙啊！）
 

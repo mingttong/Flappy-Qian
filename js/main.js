@@ -199,7 +199,7 @@ function randomPlaySound(list, sounds_num) {
 
     } else if (sounds_num > 1) {
 
-        sound = list[selectFrom(1, sounds_num)];
+        sound = list[selectFrom(1, sounds_num) - 1];
         sound.play();
 
     }

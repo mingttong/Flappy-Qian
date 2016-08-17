@@ -6,13 +6,14 @@ var SCORESOUNDS_NUM = 18,
     WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
-GRAVITY = 2000,
-    FLYSPEED = -610,
+
+var GRAVITY = 2000,
+    FLYSPEED = -500,
     XUEQIAN_WIDTH = 73,
     XUEQIAN_HEIGHT = 83,
     TITLE_WIDTH = 0,
     TITLE_HEIGHT = 0,
-    GROUND_HEIGHT = 112,
+    GROUND_HEIGHT = 50,
     GAP = 250,
     PIPE_WIDTH = 52,
     PIPE_HEIGHT = 500,
@@ -114,7 +115,7 @@ game.States.preload = function () {
         game.load.onFileComplete.add(showLoadingText);
 
         //以下为要加载的资源
-        game.load.image('background', 'assets/background.png'); // 游戏背景
+        game.load.image('background', 'assets/background.jpg'); // 游戏背景
         game.load.image('ground', 'assets/ground.png'); // 地面
         game.load.image('title', 'assets/title.png'); // 游戏标题
         game.load.spritesheet('bird', 'assets/qian.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT); // 鸟

@@ -1,8 +1,8 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
-var SCORESOUNDS_NUM = 18,
-    HURTSOUNDS_NUM = 15,
+var SCORESOUNDS_NUM = 32,
+    HURTSOUNDS_NUM = 22,
     WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
@@ -322,7 +322,7 @@ game.States.play = function () {
         this.gameIsOver = false; // 游戏是否已结束的标志
         this.hasHitGround = false; // 是否撞到地面的标志
         this.hasStarted = true; // 游戏是否已经开始的标志
-        this.scoreText = game.add.bitmapText(game.world.centerX - 20, 30, 'flappy_font', '0', 36);
+        this.scoreText = game.add.bitmapText(WINDOW_WIDTH / 2, 30, 'flappy_font', '0', 36);
         this.score = 0; // 初始得分
         this.bg.autoScroll(-(this.gameSpeed / 10), 0); // 让背景开始移动
         this.ground.autoScroll(-this.gameSpeed, 0); // 让地面开始移动

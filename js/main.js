@@ -1,18 +1,19 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
-var SCORESOUNDS_NUM = 18,
-    HURTSOUNDS_NUM = 15,
+var SCORESOUNDS_NUM = 32,
+    HURTSOUNDS_NUM = 22,
     WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
-GRAVITY = 2000,
-    FLYSPEED = -610,
+
+var GRAVITY = 2000,
+    FLYSPEED = -500,
     XUEQIAN_WIDTH = 73,
     XUEQIAN_HEIGHT = 83,
     TITLE_WIDTH = 0,
     TITLE_HEIGHT = 0,
-    GROUND_HEIGHT = 112,
+    GROUND_HEIGHT = 50,
     GAP = 250,
     PIPE_WIDTH = 52,
     PIPE_HEIGHT = 500,
@@ -114,7 +115,7 @@ game.States.preload = function () {
         game.load.onFileComplete.add(showLoadingText);
 
         //以下为要加载的资源
-        game.load.image('background', 'assets/background.png'); // 游戏背景
+        game.load.image('background', 'assets/background.jpg'); // 游戏背景
         game.load.image('ground', 'assets/ground.png'); // 地面
         game.load.image('title', 'assets/title.png'); // 游戏标题
         game.load.spritesheet('bird', 'assets/qian.png', XUEQIAN_WIDTH, XUEQIAN_HEIGHT); // 鸟
@@ -199,7 +200,7 @@ function randomPlaySound(list, sounds_num) {
 
     } else if (sounds_num > 1) {
 
-        sound = list[selectFrom(1, sounds_num)];
+        sound = list[selectFrom(1, sounds_num) - 1];
         sound.play();
 
     }
@@ -218,7 +219,7 @@ function playScoreSound() {
 
     currentScoreSound = randomPlaySound(scoreSounds, SCORESOUNDS_NUM);
 
-    console.log(currentScoreSound);
+    //console.log(currentScoreSound);
 
 }
 
@@ -234,7 +235,7 @@ function playHurtSound() {
 
     currentHurtSound = randomPlaySound(hurtSounds, HURTSOUNDS_NUM);
 
-    console.log(currentHurtSound);
+    //console.log(currentHurtSound);
 
 }
 
@@ -321,7 +322,7 @@ game.States.play = function () {
         this.gameIsOver = false; // 游戏是否已结束的标志
         this.hasHitGround = false; // 是否撞到地面的标志
         this.hasStarted = true; // 游戏是否已经开始的标志
-        this.scoreText = game.add.bitmapText(game.world.centerX - 20, 30, 'flappy_font', '0', 36);
+        this.scoreText = game.add.bitmapText(WINDOW_WIDTH / 2, 30, 'flappy_font', '0', 36);
         this.score = 0; // 初始得分
         this.bg.autoScroll(-(this.gameSpeed / 10), 0); // 让背景开始移动
         this.ground.autoScroll(-this.gameSpeed, 0); // 让地面开始移动

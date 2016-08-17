@@ -1,6 +1,6 @@
 ## 学谦之门——复仇前的真龙
 
-**这是在结合 [Flappy Frog](https://github.com/tusenpo/FlappyFrog) 和 [Flappy Bird](https://github.com/chaping/flappy-bird) 的基础上，进行了谦式的修改。**  
+**这是在结合 [Flappy Frog](https://github.com/tusenpo/FlappyFrog) 和 [Flappy Bird](https://github.com/chaping/flappy-bird) 的基础上，用[Phaser framework](http://phaser.io/)进行了谦式的修改。**  
 
 **play: [https://mingttong.github.io/Flappy-Qian/](https://mingttong.github.io/Flappy-Qian/)**  
 

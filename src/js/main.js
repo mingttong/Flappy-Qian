@@ -219,7 +219,7 @@ function playScoreSound() {
 
     currentScoreSound = randomPlaySound(scoreSounds, SCORESOUNDS_NUM);
 
-    console.log(currentScoreSound);
+    //console.log(currentScoreSound);
 
 }
 
@@ -235,7 +235,7 @@ function playHurtSound() {
 
     currentHurtSound = randomPlaySound(hurtSounds, HURTSOUNDS_NUM);
 
-    console.log(currentHurtSound);
+    //console.log(currentHurtSound);
 
 }
 

@@ -1,13 +1,9 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
-<<<<<<< HEAD
-var SCORESOUNDS_NUM = 32,
-    HURTSOUNDS_NUM = 22,
-=======
+
 var SCORESOUNDS_NUM = 19,
     HURTSOUNDS_NUM = 18,
->>>>>>> master
     WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;

@@ -1,8 +1,13 @@
 /**
  * Created by lenovo on 2016/8/10.
  */
+<<<<<<< HEAD
 var SCORESOUNDS_NUM = 32,
     HURTSOUNDS_NUM = 22,
+=======
+var SCORESOUNDS_NUM = 19,
+    HURTSOUNDS_NUM = 18,
+>>>>>>> master
     WINDOW_WIDTH = 480,
     WINDOW_HEIGHT = 700,
     SPEED = 390;
@@ -180,11 +185,13 @@ game.States.menu = function () {
     }
 };
 
-function initSounds(result, key, len) {
+function initSounds(result, key, len, volume) {
+
+    volume = volume || 1;
 
     for (var i = 1; i <= len; i++) {
 
-        result.push(game.add.audio(key + i));
+        result.push(game.add.audio(key + i, volume));
 
     }
 
@@ -267,10 +274,10 @@ game.States.play = function () {
         game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
         this.ground.body.immovable = true; // 让地面在物理环境中固定不动
 
-        flapSound = game.add.audio('flap', 0.08);
+        flapSound = game.add.audio('flap', 0.8);
 
-        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM);
-        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM);
+        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM, 3);
+        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM, 1.5);
 
         this.readyText = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
         this.playTip = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片

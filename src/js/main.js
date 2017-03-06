@@ -1,6 +1,7 @@
-/**
+﻿/**
  * Created by lenovo on 2016/8/10.
  */
+
 var SCORESOUNDS_NUM = 19,
     HURTSOUNDS_NUM = 18,
     WINDOW_WIDTH = 480,
@@ -269,10 +270,10 @@ game.States.play = function () {
         game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
         this.ground.body.immovable = true; // 让地面在物理环境中固定不动
 
-        flapSound = game.add.audio('flap', 0.8);
+        flapSound = game.add.audio('flap', 0.2);
 
-        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM, 3);
-        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM, 1.5);
+        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM, 1);
+        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM, 1);
 
         this.readyText = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
         this.playTip = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片

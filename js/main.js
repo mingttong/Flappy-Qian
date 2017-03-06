@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Created by lenovo on 2016/8/10.
  */
 
@@ -16,7 +16,7 @@ var GRAVITY = 2000,
     TITLE_HEIGHT = 0,
     GROUND_HEIGHT = 50,
     GAP = 250,
-    PIPE_WIDTH = 52,
+    PIPE_WIDTH = 52
     PIPE_HEIGHT = 500,
     POSITION_MIN = GAP / 2 + 35,
     POSITION_MAX = WINDOW_HEIGHT - GAP / 2 - GROUND_HEIGHT - 50;
@@ -270,10 +270,10 @@ game.States.play = function () {
         game.physics.enable(this.ground, Phaser.Physics.ARCADE); // 开启地面的物理系统
         this.ground.body.immovable = true; // 让地面在物理环境中固定不动
 
-        flapSound = game.add.audio('flap', 0.8);
+        flapSound = game.add.audio('flap', 0.2);
 
-        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM, 3);
-        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM, 1.5);
+        initSounds(scoreSounds, 'score', SCORESOUNDS_NUM, 1);
+        initSounds(hurtSounds, 'hurt', HURTSOUNDS_NUM, 1);
 
         this.readyText = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 5, 'ready_text'); // get ready文字
         this.playTip = game.add.image(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 2 / 3, 'play_tip'); // 提示点击屏幕的图片
@@ -332,6 +332,7 @@ game.States.play = function () {
         this.bird.body.gravity.y = GRAVITY; // 给鸟设一个重力
         this.readyText.destroy(); // 去除 'get ready'图片
         this.playTip.destroy(); // 去除'玩法提示' 图片
+        //$('body').tap(game.States.play.fly);
         game.input.onDown.add(this.fly, this); // 给鼠标按下事件绑定鸟的飞翔动作
         game.time.events.start(); // 启动时钟事件，开始制造管道
     };
